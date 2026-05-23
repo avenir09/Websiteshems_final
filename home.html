@@ -1,0 +1,166 @@
+<html>
+    <head>
+        <link rel = "stylesheet" href="style.css">
+        <link rel = "stylesheet" href="style3.css">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>WovenWonders</title>
+        <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+        <script type="module" src="database.js"></script>
+        <script>
+            function checkLogin() {
+            // 1. Check if the user is logged in (looking for a saved key like 'isLoggedIn' or 'user')
+                const user = localStorage.getItem('isLoggedIn'); 
+                if (user === 'true') {
+                // If logged in, go to the commission page
+                window.location.href = 'commission.html';
+                } else {
+                // 2. Show the message
+                alert("You are not registered or logged in yet. Please create an account to continue.");
+        
+                // 3. Direct them to the create account/Sign Up page
+                window.location.href = 'SignUp.html';
+                }
+            }
+        </script>
+
+    </head>
+    <body>
+        <section class="home" id="home">
+            <nav class="navi">
+            <input type="checkbox" id="navi-toggle" class="navi-checkbox">   
+            <div class="logo-container">
+                <div class="ww"><b>Woven</b><span class="ww-span"><b>Wonders</b></span></div>
+                    <label for="navi-toggle" class="navi-button">
+                        <span class="navi-icon">&nbsp;</span>
+                    </label>
+                </div>
+                <ul class="navbar">
+                    <li><a class="link" href="market.html">Marketplace</a></li>
+                    <li><a class="link" href="#how">How it works</a></li>
+                    <li><a class="link" href="#seller">Sellers</a></li>
+                    <li><a class="link" href="#bdy1">About</a></li>
+                    <li><button class="strtcreate" type="button" onclick="window.location.href='SignUp.html'">Start Creating</button></li>
+                </ul>
+            </nav>
+            <div class="back">
+                    <a class="hoverback" href="#home">&larr;BACK</a>
+                </div>
+            <div class="layout">
+                <div class="left">
+                    <p class="txt">Handcrafted - Custom - Yours</p>
+                    <p class="p1">Your sketch, <span class="p2"><b>stitched</b></span><span class="p3">life.</span>
+                    <p class="txt2">Commission one-of-a-kind handmade crochet pieces<br> from skilled artisans. Upload your design idea and
+                    <br> watch it come to life, stitch by stitch.</p>
+                    <button class="btn1" type="button" onclick="checkLogin()">Commission a Piece</button>
+                    <button class="btn2" type="button" onclick="window.location.href='SignIn.html'">Become a Seller</button>
+                </div>
+                <div class="right">
+                <div class="circle">
+                    <div class="picholder">
+                        <img class="bearpic" src="images/bear.png">
+                        <span class="atxt">Custom Amigurumi Bear</span>
+                        <span class="inprog">In Progress</span>
+                        <p class="txt3">By Maria C.Est. delivery: 7 days</p>
+                        <div class="rdprogbar">
+                            <div class="fill"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="bdy1" class="stats-section">
+            <div class="container1">
+                <div class="reviews">
+                    <div class="stat-card">
+                        <p class="rev"><b>1,200</b> +</p>
+                        <p class="revtxt">Commissions Completed</p>
+                    </div>
+                    <div class="stat-card">
+                        <p class="rev"><b>340</b> +</p>
+                        <p class="revtxt">Skilled Artisans</p>
+                    </div>
+                    <div class="stat-card">
+                        <p class="rev"><b>98%</b></p>
+                        <p class="revtxt">Happy Customers</p>
+                    </div>
+                    <div class="stat-card">
+                        <p class="rev"><b>50</b> +</p>
+                        <p class="revtxt">Crochet Styles</p>
+                    </div>
+                </div>
+            </div>
+            <div class="intro-text">
+                <p class="header-label">What makes us different</p>
+                <h2 class="t1">Built for<br> custom craft.</h2>
+            </div>
+            <ul class="features-list">
+                <li class="feature-item">
+                    <span class="num">01</span>
+                    <h3 class="lyr1">Sketch-to-Stitch Upload</h3>
+                    <p class="lyr2">Upload your sketch directly to your artisans.</p>
+                </li>
+                <li class="feature-item">
+                    <span class="num">02</span>
+                    <h3 class="lyr1">Live Progress Tracking</h3>
+                    <p class="lyr2">Receive real-time photo updates.</p>
+                </li>
+                <li class="feature-item">
+                    <span class="num">03</span>
+                    <h3 class="lyr1">Flexible Payments</h3>
+                    <p class="lyr2">Pay online or cash on delivery.</p>
+                </li>
+            </ul>
+        </section>
+
+        <section id="how" class="how-it-works">
+            <div class="container1">
+                <div class="how-wrapper">
+                    <div class="steplayout">
+                        <h2 class="section-label">HOW IT WORKS</h2>
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h3>Upload your sketch</h3>
+                                <p>Draw your idea, upload it, and describe the size, color, and material you have in mind.</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <h3>Get matched with an artisan</h3>
+                                    <p>We connect you with a skilled crocheter whose style matches your vision perfectly.</p>
+                                </div>
+                            </div>
+                        <div class="step-item">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h3>Track every stitch</h3>
+                                <p>Follow the progress with photo updates, then receive your unique handcrafted piece.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-column">
+                        <div class="promo-card">
+                            <img src="images/needle-icon.png" alt="Crafting Icon" class="card-icon">
+                            <h2>Crafted with care, delivered with love.</h2>
+                            <p>Every WovenWonders piece is made by hand, just for you.</p>
+                        </div>
+                    </div>
+                </div> 
+            </div>
+        </section>
+
+        <section id="seller" class="sellerintro">
+            <div class="layout">
+                <div class="slleft">
+                    <p class="slp">Join our community of talented crocheters and<br> bring custom creations to customers worldwide.</p>
+                    <p class="slptxt">Skilled artisans, <b>stitching</b> your vision to life.</p>
+                    <button class="slbtn" type="button" onclick="window.location.href='SignUp.html'">Register Account</button>
+                </div>
+                <img class="helpme" src="images/helpme.jpg" alt="">
+            </div>
+        </section>
+    </body>
+</html>

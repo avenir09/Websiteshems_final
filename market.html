@@ -1,0 +1,149 @@
+<html>
+    <head>
+        <link rel = "stylesheet" href="style.css">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>WovenWonders</title>
+        <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+
+    </head>
+    <body>
+        <label class="menubar">
+            <input type="checkbox" aria-label="Toggle navigation menu">
+        </label>
+        <aside class="sidebar">
+            <a class="a" href="home.html">Home</a>
+            <a class="a" href="home.html#how">How it works</a>
+            <a class="a" href="home.html#bdy1">About</a>
+            <a class="a" href="home.html#seller">Seller</a>
+            <a class="a" href="SignUp.html">Sign Up</a>
+        </aside>
+        <div class="hder">
+            <div class="htxt">Ready to create something truly unique?</div>
+            <p class="jointxt">Join our growing community of buyers and artisans.</p>
+            <button class="commibtn" type="button" onclick="checkLogin()">Commission Your first Piece</button>
+        </div>
+        <div class="showcase">
+            <h3>Our Featured Creations</h3>
+            <div class="showcase-item">
+                <div class="case">
+                    <img src="images/help.png" alt="Showcase 1">
+                </div>
+                <p class="showcase-desc">Mickey & Minnie Mouse HAPPPY VALENTINES DAY</p>
+                <span>₱150</span>
+            </div>
+            <div class="showcase-item">
+                <div class="case">
+                    <img src="images/me.jpg" alt="Showcase 2">
+                </div>
+                <p class="showcase-desc">Experience the joy of owning a one-of-a-kind creation.</p>
+                <span>₱200</span>
+            </div>
+            <div class="showcase-item">
+                <div class="case">
+                    <img src="images/nez.png" alt="Showcase 3">
+                </div>
+                <p class="showcase-desc">Support talented artisans and bring your vision to life.</p>
+                <span>₱250</span>
+            </div>
+            <div class="showcase-item">
+                <div class="case">
+                    <img src="images/micky.png" alt="Showcase 3">
+                </div>
+                <p class="showcase-desc">Support talented artisans and bring your vision to life.</p>
+                <span>₱75</span>
+            </div> 
+        </div>
+        <div class="info-holder">
+            <div>
+                <p class="name">Woven Wonders</p>
+            </div>
+            <div>
+                <p>© 2025 WovenWonders. All rights reserved</p>
+            </div>
+            <div>
+                <p>Made with 🧶 for handmade lovers</p>
+            </div>
+        </div>
+        <script>
+            const CART_KEY = 'marketCart';
+            const AVAILABLE_ORDERS_KEY = 'availableOrders';
+
+            function checkLogin() {
+                const user = localStorage.getItem('isLoggedIn'); 
+                if (user === 'true') {
+                    window.location.href = 'commission.html';
+                } else {
+                    alert('You are not registered or logged in yet. Please create an account to continue.');
+                    window.location.href = 'SignUp.html';
+                }
+            }
+
+            function getUserInfo() {
+                return JSON.parse(localStorage.getItem('userInfo') || '{}') || {};
+            }
+
+            function isUserLoggedIn() {
+                return localStorage.getItem('isLoggedIn') === 'true' && localStorage.getItem('userInfo');
+            }
+
+            function saveCartItem(item) {
+                const cart = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
+                cart.push(item);
+                localStorage.setItem(CART_KEY, JSON.stringify(cart));
+            }
+
+            function saveAvailableOrder(order) {
+                const orders = JSON.parse(localStorage.getItem(AVAILABLE_ORDERS_KEY) || '[]');
+                orders.push(order);
+                localStorage.setItem(AVAILABLE_ORDERS_KEY, JSON.stringify(orders));
+            }
+
+            function handleShowcaseItemDoubleClick(event) {
+                const itemElement = event.currentTarget;
+                const title = itemElement.querySelector('.showcase-desc')?.textContent.trim() || 'Featured item';
+                const priceText = itemElement.querySelector('span')?.textContent.trim() || '₱0';
+                const image = itemElement.querySelector('img')?.src || '';
+                const price = Number(priceText.replace(/[^0-9.-]+/g, '')) || 0;
+
+                const confirmAdd = confirm(`Add \"${title}\" to your cart?`);
+                if (!confirmAdd) {
+                    return;
+                }
+
+                if (!isUserLoggedIn()) {
+                    alert('You must be logged in to add items to cart. Please sign in or create an account.');
+                    window.location.href = 'SignIn.html';
+                    return;
+                }
+
+                const user = getUserInfo();
+                const order = {
+                    id: `market-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+                    title,
+                    price,
+                    image,
+                    customer: user.name || user.email || 'WovenWonders Buyer',
+                    email: user.email || '',
+                    source: 'marketplace',
+                    quantity: 1,
+                    delivery: 'Marketplace order',
+                    status: 'Pending'
+                };
+
+                saveCartItem(order);
+                saveAvailableOrder(order);
+                alert(`\"${title}\" has been added to your cart and is now available in marketplace orders.`);
+            }
+
+            function attachShowcaseListeners() {
+                document.querySelectorAll('.showcase-item').forEach(item => {
+                    item.addEventListener('dblclick', handleShowcaseItemDoubleClick);
+                    item.style.cursor = 'pointer';
+                });
+            }
+
+            window.addEventListener('DOMContentLoaded', attachShowcaseListeners);
+        </script>
+    </body>
+</html>

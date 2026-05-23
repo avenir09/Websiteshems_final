@@ -1,0 +1,297 @@
+<html>
+    <head>
+        <link rel = "stylesheet" href="style2.css">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>WovenWonders</title>
+        <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+        <script type="module" src="database.js"></script>
+
+    </head>
+    <body>
+        <div class="cart-icon" onclick="toggleCart()">🛒 Cart <span class="cart-count" id="cartCount">0</span></div>
+        <div class="cart-modal" id="cartModal">
+            <div class="user-avatar" id="userAvatar">M</div>
+            <div class="cart-header"><h2>Your Cart</h2><button class="close-cart" onclick="toggleCart()">×</button></div>
+            <div id="cartItems"></div>
+            <div class="cart-total">Total: ₱<span id="cartTotal">0</span></div>
+            <button class="checkout-btn" onclick="checkout()">Proceed to Checkout</button>
+        </div>
+        <div class="layout">
+            <div class="sidebar">
+                <a href="home.html"><p class="logo">Woven<i>Wonders</i></p><br></a>
+                <p class="menu-title">MENU</p>
+                <div class="menu">
+                    <a href="dashboard.html">Dashboard</a>
+                    <a href="order.html">My Orders</a>
+                    <a class="active">Commission a Piece</a>
+                    <a href="msg.html">Messages</a>
+                    <a href="settings.html">Settings</a><br><br><br><br><br><br><br><br>
+                    <button class="logout-button" onclick="logoutUser()">Log Out</button>                 
+                </div>
+            </div>
+            <div class="sublayout">
+                <p class="hdcommi">Commission a Piece</p>
+                <p class="sbcommi">Fill in the details and upload your sketch to get started</p>
+                <form class="upld">
+                    <label class="label" for="item">ITEM NAME</label>
+                    <input type="text" placeholder="e.g Cardigan, stuff bear" name="item" id="item">
+                    <label class="label" for="description">DESCRIPTION</label>
+                    <textarea class="txtarea" type="text" placeholder="Enter other details you wanna input" name="descrip" rows="4" cols="50"></textarea>
+                    <div class="container">
+                        <div>
+                            <label class="lbl" for="size">SIZE</label>
+                            <input class="input" type="text" placeholder="e.g Small, Medium, Large" name="size" id="size">
+                        </div>
+                        <div>
+                            <label class="lbl" for="budget">BUDGET (₱)</label>
+                            <input class="input" type="number" placeholder="Enter your budget" name="budget" id="budget">
+                        </div>
+                    </div>
+                    <label class="lbl" for="pref">PREFERRED COLORS</label>
+                    <input type="text" placeholder="e.g Red, Blue, Green" name="pref" id="pref">
+                    <label class="lbl" for="payment">PAYMENT METHOD</label>
+                    <button class="btns" type="button" onclick="setPayment('Online')">ONLINE</button>
+                    <button class="btns" type="button" onclick="setPayment('Cash on Delivery')">CASH ON DELIVERY</button>
+                </form>
+            </div>
+            <div class="sublayout">
+                <form class="updlayout">
+                    <div>
+                        <p class="uptxt">UPLOAD YOUR SKETCH</p>
+                        <label for="sketch" class="upldsketch">
+                            <div id="sketch-preview">
+                                <span style="margin-left: 30px;">Click to upload sketch</span><br>
+                                <span style="color: #8C6650;">PNG, JPG, or PDF · Max 10MB</span>
+                            </div>
+                            <input type="file" id="sketch" accept="image/*" hidden>
+                        </label>
+                    </div>
+                    <div>
+                        <p class="reftxt">REFERENCE PHOTOS (OPTIONAL)</p>
+                        <label for="references" class="opfile">
+                            <div id="references-preview" style="text-align: center; margin-top: 10px;">
+                                <span style="text-align: center; color: #8C6650;">Attach additional referrence images</span>
+                            </div>
+                            <input type="file" id="references" accept="image/*" multiple>
+                        </label>
+                    </div>
+                    <div>
+                        <label for="ddln" class="lbl">DEADLINE (OPTIONAL)</label>
+                        <input type="date" name="ddln" id="ddln">
+                    </div>
+                    <div>
+                        <button class="sub" type="button" id="submitCommission">SUBMIT COMMISSION</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <script>
+        let cart = JSON.parse(localStorage.getItem('wovenCart')) || [];
+        let selectedPayment = "Online";
+
+        function toggleCart() {
+            document.getElementById('cartModal').classList.toggle('active');
+        }
+
+        function setPayment(method) {
+            selectedPayment = method;
+            alert("Payment set to: " + method);
+        }
+
+        // Sketch Preview with "Cover" Fit
+        document.getElementById('sketch').addEventListener('change', function() {
+        const preview = document.getElementById('sketch-preview');
+        if (this.files && this.files[0]) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                preview.innerHTML = `<img src="${e.target.result}" style="width: 100%; height: 100%; object-fit: cover;">`;
+            };
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+
+        // Multi-Reference Preview
+        document.getElementById('references').addEventListener('change', function() {
+        const preview = document.getElementById('references-preview');
+        preview.innerHTML = '';
+        Array.from(this.files).forEach(file => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.style.width = "50px";
+                img.style.height = "50px";
+                img.style.objectFit = "cover";
+                img.style.borderRadius = "4px";
+                preview.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+            });
+        });
+
+        function updateCartDisplay() {
+        const itemsDiv = document.getElementById('cartItems');
+        const countSpan = document.getElementById('cartCount');
+        const totalSpan = document.getElementById('cartTotal');
+
+        countSpan.innerText = cart.length;
+        
+        if (cart.length === 0) {
+            itemsDiv.innerHTML = '<p style="text-align:center; padding:20px;">Cart is empty</p>';
+            totalSpan.innerText = "0";
+            return;
+        }
+
+        itemsDiv.innerHTML = cart.map((item, index) => `
+            <div class="cart-item" style="border-bottom: 1px solid #eee; padding: 10px 0;">
+                <h4 style="margin:0;">${item.name}</h4>
+                <small>${item.size} | ${item.payment}</small>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="color:#B84A1E; font-weight:bold;">₱${item.price.toLocaleString()}</span>
+                    <button onclick="removeFromCart(${index})" style="color:red; background:none; border:none; cursor:pointer;">Remove</button>
+                </div>
+            </div>`).join('');
+
+                const total = cart.reduce((sum, item) => sum + item.price, 0);
+                totalSpan.innerText = total.toLocaleString();
+            }
+
+            function removeFromCart(index) {
+                cart.splice(index, 1);
+                localStorage.setItem('wovenCart', JSON.stringify(cart));
+                updateCartDisplay();
+            }
+
+            // 5. THE CHECKOUT FIX
+            function checkout() {
+                if (cart.length === 0) {
+                    alert("Your cart is empty!");
+                    return;
+                }
+
+                const total = cart.reduce((sum, item) => sum + item.price, 0);
+
+                const confirmPurchase = confirm(`Total amount is ₱${total.toLocaleString()}. Proceed to place your orders?`);
+
+                if (confirmPurchase) {
+                    // Save commissioned items to localStorage
+                    const existingOrders = JSON.parse(localStorage.getItem('commissioningOrders') || '[]');
+                    const newOrders = cart.map(item => ({
+                        ...item,
+                        orderId: Date.now() + Math.random(),
+                        status: 'Pending',
+                        progress: 0,
+                        startDate: new Date().toISOString().split('T')[0]
+                    }));
+                    localStorage.setItem('commissioningOrders', JSON.stringify([...existingOrders, ...newOrders]));
+                    localStorage.setItem('commissionChatData', JSON.stringify(cart));
+                    
+                    cart = [];
+                    localStorage.removeItem('wovenCart');
+                    updateCartDisplay();
+                    toggleCart();
+                    
+                    // Redirect to commission chat
+                    window.location.href = 'order.html';
+                }
+            }
+
+            function setActivePaymentButton(selectedMethod) {
+                document.querySelectorAll('.btns').forEach(btn => {
+                    btn.style.background = btn.textContent.trim() === selectedMethod.toUpperCase() ? '#B84A1E' : '';
+                    btn.style.color = btn.textContent.trim() === selectedMethod.toUpperCase() ? 'white' : '#3B1406';
+                });
+            }
+
+            function addCommissionToCart(e) {
+                if (e && e.preventDefault) e.preventDefault();
+
+                const itemName = document.getElementById('item').value.trim();
+                const itemBudget = parseFloat(document.getElementById('budget').value);
+                const size = document.getElementById('size').value.trim() || 'Standard';
+                const deadline = document.getElementById('ddln').value.trim() || 'Flexible';
+                const description = document.querySelector('textarea[name="descrip"]').value.trim();
+                const colors = document.getElementById('pref').value.trim() || 'Any';
+
+                if (!itemName) {
+                    alert('Please enter the item name.');
+                    return;
+                }
+                if (Number.isNaN(itemBudget) || itemBudget <= 0) {
+                    alert('Please enter a valid budget amount.');
+                    return;
+                }
+
+                const newItem = {
+                    id: Date.now(),
+                    name: itemName,
+                    price: itemBudget,
+                    size,
+                    deadline,
+                    payment: selectedPayment,
+                    description,
+                    colors
+                };
+
+                cart.push(newItem);
+                localStorage.setItem('wovenCart', JSON.stringify(cart));
+                updateCartDisplay();
+                alert('Added to cart!');
+                document.querySelector('.upld').reset();
+                document.querySelector('.updlayout').reset();
+                document.getElementById('sketch-preview').innerHTML = '<span style="margin-left: 30px;">Click to upload sketch</span><br><span style="color: #8C6650;">PNG, JPG, or PDF · Max 10MB</span>';
+                document.getElementById('references-preview').innerHTML = '<span style="text-align: center; color: #8C6650;">Attach additional referrence images</span>';
+                selectedPayment = 'Online';
+                setActivePaymentButton('ONLINE');
+            }
+
+            function initializeCommissionPage() {
+                updateCartDisplay();
+
+                const submitButton = document.getElementById('submitCommission');
+                if (submitButton) {
+                    submitButton.addEventListener('click', addCommissionToCart);
+                }
+
+                document.querySelectorAll('.btns').forEach(button => {
+                    button.addEventListener('click', () => {
+                        const method = button.textContent.trim() === 'ONLINE' ? 'Online' : 'Cash on Delivery';
+                        setPayment(method);
+                        setActivePaymentButton(button.textContent.trim());
+                    });
+                });
+
+                setActivePaymentButton('ONLINE');
+            }
+
+            function loadUserAvatar() {
+                const userInfo = JSON.parse(localStorage.getItem('userInfo')) || { name: 'User', avatar: '' };
+                const avatarDiv = document.getElementById('userAvatar');
+                const name = userInfo.name || 'User';
+
+                if (!avatarDiv) return;
+
+                if (userInfo.avatar) {
+                    avatarDiv.style.backgroundImage = `url(${userInfo.avatar})`;
+                    avatarDiv.style.backgroundSize = 'cover';
+                    avatarDiv.style.backgroundPosition = 'center';
+                    avatarDiv.textContent = '';
+                } else {
+                    avatarDiv.style.backgroundImage = '';
+                    avatarDiv.textContent = name[0].toUpperCase();
+                }
+            }
+
+            window.onload = function() {
+                loadUserAvatar();
+                initializeCommissionPage();
+            };
+
+            function logoutUser() {
+                alert("Logging out... See you soon!");
+                window.location.href = "SignIn.html";
+            }
+        </script>
+    </body>
+</html>

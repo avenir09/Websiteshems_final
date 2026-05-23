@@ -1,0 +1,590 @@
+/* ========================================================================
+   WovenWonders — Auth pages (SignIn.html, SignUp.html)
+   ======================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..900,30..100;1,9..144,300..900,30..100&family=Manrope:wght@300..800&display=swap');
+
+:root {
+    --cream:        #FBF6F0;
+    --cream-deep:   #F5EBE0;
+    --linen:        #E8D5C4;
+    --linen-soft:   #F0DDCC;
+    --rust:         #B84A1E;
+    --rust-deep:    #8E3514;
+    --rust-soft:    #F0D5C8;
+    --clay:         #C97B3F;
+    --bark:         #3B1406;
+    --bark-soft:    #5C2410;
+    --mocha:        #8C6650;
+    --ink:          #2A1508;
+    --success-bg:   #E6F6EE;
+
+    --font-display: 'Fraunces', 'Times New Roman', serif;
+    --font-body:    'Manrope', system-ui, sans-serif;
+
+    --ease:         cubic-bezier(0.22, 1, 0.36, 1);
+    --t-fast:       180ms;
+    --t-base:       320ms;
+
+    --shadow-sm:    0 2px 8px rgba(59, 20, 6, 0.06);
+    --shadow-md:    0 12px 32px rgba(59, 20, 6, 0.08);
+    --shadow-lg:    0 24px 60px rgba(59, 20, 6, 0.12);
+
+    --r-sm:         8px;
+    --r-md:         14px;
+    --r-lg:         22px;
+    --r-pill:       999px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+
+body {
+    margin: 0;
+    background-color: var(--cream);
+    font-family: var(--font-body);
+    color: var(--ink);
+    font-size: 16px;
+    line-height: 1.55;
+    min-height: 100vh;
+}
+
+a { text-decoration: none; color: inherit; }
+button { font-family: inherit; cursor: pointer; }
+
+/* ---- Layout ---- */
+.layout {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    min-height: 100vh;
+    gap: 0;
+    background-color: var(--cream);
+}
+
+.left, .sleft {
+    flex: 1 1 460px;
+    width: 100%;
+    background:
+        radial-gradient(circle at 30% 70%, rgba(201, 123, 63, 0.12) 0%, transparent 50%),
+        radial-gradient(circle at 70% 30%, rgba(184, 74, 30, 0.08) 0%, transparent 50%),
+        var(--cream-deep);
+    padding: 60px 6%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.left::before, .sleft::before {
+    content: '';
+    position: absolute;
+    top: 10%; right: -5%;
+    width: 220px;
+    height: 220px;
+    border: 2px dashed var(--linen);
+    border-radius: 50%;
+    opacity: 0.5;
+}
+
+.left::after, .sleft::after {
+    content: '';
+    position: absolute;
+    bottom: 8%; left: -8%;
+    width: 180px;
+    height: 180px;
+    border: 1px dashed var(--rust-soft);
+    border-radius: 50%;
+    opacity: 0.6;
+}
+
+.right, .sright {
+    flex: 1 1 460px;
+    width: 100%;
+    background-color: var(--cream);
+    padding: 60px 6% 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* ---- Logo ---- */
+.ww {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    text-align: center;
+    margin: 0 0 40px 0;
+    float: none;
+    color: var(--ink);
+    position: relative;
+    z-index: 1;
+}
+
+.ww span {
+    color: var(--rust);
+    font-style: italic;
+    font-weight: 500;
+}
+
+/* SignIn-specific anchor wrapping the logo */
+.sleft > a, .left > a {
+    display: block;
+    text-align: center;
+    margin-bottom: 0;
+}
+
+.sleft > a p,
+.left > a p {
+    display: inline;
+    float: none !important;
+    font-size: 2rem;
+    font-family: var(--font-display);
+    font-weight: 600;
+    margin: 0 !important;
+    color: var(--ink);
+}
+
+.sleft > a p[style] {
+    color: var(--rust) !important;
+    font-style: italic;
+    font-size: 2rem !important;
+    margin: 0 !important;
+    margin-top: 0 !important;
+}
+
+/* ---- Visual circle ---- */
+.circle {
+    width: 100%;
+    max-width: 360px;
+    aspect-ratio: 1;
+    background:
+        radial-gradient(circle at 30% 30%, var(--linen-soft) 0%, var(--rust-soft) 100%);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 40px auto;
+    padding: 40px 30px;
+    box-shadow: var(--shadow-md);
+    position: relative;
+    z-index: 1;
+}
+
+.circle img {
+    margin: 0 0 12px 0;
+    max-width: 110px;
+    max-height: 110px;
+    border-radius: 50%;
+    background: var(--cream);
+    padding: 14px;
+    box-shadow: var(--shadow-sm);
+}
+
+.txt-info {
+    font-family: var(--font-display);
+    font-size: 1.7rem;
+    font-weight: 400;
+    text-align: center;
+    color: var(--ink);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    margin: 0 0 8px 0;
+    font-variation-settings: "SOFT" 80, "opsz" 144;
+}
+
+.txt-info i {
+    color: var(--rust);
+    font-style: italic;
+}
+
+.subtxt {
+    color: var(--mocha);
+    text-align: center;
+    font-size: 0.78rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin: 0;
+}
+
+/* ---- Hidden mobile link ---- */
+.hidelink { display: none; }
+
+/* ---- Form headers ---- */
+.headertxt, .hdtxt {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    font-weight: 400;
+    text-align: left;
+    margin: 0 0 8px 0;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    font-variation-settings: "SOFT" 80, "opsz" 144;
+}
+
+.hdsub, .sbtxt {
+    color: var(--mocha);
+    font-family: var(--font-body);
+    text-align: left;
+    margin: 0 0 32px 0;
+    font-size: 1rem;
+    line-height: 1.55;
+}
+
+/* ---- Form ---- */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    max-width: 460px;
+    width: 100%;
+}
+
+label, .lbl {
+    color: var(--bark);
+    font-family: var(--font-body);
+    display: block;
+    margin: 0 0 8px 0;
+    font-size: 0.74rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+#email, #psw {
+    width: 100%;
+    height: 52px;
+    margin: 0;
+    border-radius: var(--r-md);
+    border: 1.5px solid var(--linen);
+    text-align: left;
+    padding: 0 18px;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    color: var(--ink);
+    background: var(--cream);
+    transition: border-color var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease);
+}
+
+#email:focus, #psw:focus {
+    outline: none;
+    border-color: var(--rust);
+    box-shadow: 0 0 0 4px rgba(184, 74, 30, 0.12);
+}
+
+#fname, #lname {
+    width: 100%;
+    height: 52px;
+    padding: 0 18px;
+    margin: 0;
+    border-radius: var(--r-md);
+    border: 1.5px solid var(--linen);
+    text-align: left;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    color: var(--ink);
+    background: var(--cream);
+    transition: border-color var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease);
+}
+
+#fname:focus, #lname:focus {
+    outline: none;
+    border-color: var(--rust);
+    box-shadow: 0 0 0 4px rgba(184, 74, 30, 0.12);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-row {
+    display: flex;
+    margin: 0;
+    gap: 14px;
+}
+
+.form-row .form-group { flex: 1; }
+
+.inp-field {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+/* Password toggle wrapper expects relative parent */
+.toggle-password {
+    position: relative;
+    display: block !important;
+    width: 100% !important;
+}
+
+.toggle-password input {
+    width: 100% !important;
+    padding-right: 50px !important;
+}
+
+.toggle-password button,
+.toggle-password .toggle-btn {
+    position: absolute !important;
+    right: 14px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--mocha);
+    font-size: 16px;
+    padding: 5px;
+}
+
+.toggle-password button:hover { color: var(--rust); }
+
+/* ---- Forgot link ---- */
+.forgot {
+    font-family: var(--font-body);
+    color: var(--rust);
+    font-size: 0.88rem;
+    font-weight: 500;
+    margin: 4px 0 8px 0;
+    text-align: right;
+    display: block;
+    align-self: flex-end;
+    transition: color var(--t-fast) var(--ease);
+}
+
+.forgot:hover { color: var(--rust-deep); text-decoration: underline; }
+
+/* ---- Buttons ---- */
+.btncrt {
+    margin: 0;
+}
+
+.crt, .SignIn {
+    width: 100%;
+    height: 56px;
+    background-color: var(--ink);
+    color: var(--cream);
+    margin: 8px 0 0 0;
+    border-radius: var(--r-pill);
+    border: none;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    transition: background var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+}
+
+.crt:hover, .SignIn:hover {
+    background-color: var(--rust);
+    color: var(--cream);
+    transform: translateY(-2px);
+    border: none;
+    cursor: pointer;
+}
+
+/* ---- Role buttons ---- */
+.lbltxt {
+    margin: 8px 0 0 0;
+    text-align: left;
+}
+
+.inpt {
+    display: flex;
+    gap: 14px;
+    width: 100%;
+}
+
+.btnbuyer, .btnsell {
+    flex: 1;
+    width: auto;
+    height: 52px;
+    background-color: var(--cream);
+    margin: 0;
+    border: 1.5px solid var(--linen);
+    border-radius: var(--r-md);
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--bark);
+    transition: all var(--t-fast) var(--ease);
+}
+
+.btnbuyer:hover, .btnsell:hover {
+    background-color: var(--cream-deep);
+    border-color: var(--rust);
+    cursor: pointer;
+}
+
+.btnbuyer.selected,
+.btnsell.selected,
+.btnbuyer:active,
+.btnsell:active {
+    background-color: var(--rust);
+    color: var(--cream);
+    border-color: var(--rust);
+}
+
+/* ---- Divider ---- */
+.p-line {
+    width: 100%;
+    height: 1px;
+    background-color: var(--linen);
+    margin: 16px 0 8px 0;
+    text-align: center;
+    position: relative;
+    border: none;
+}
+
+.p-txt {
+    background-color: var(--cream);
+    color: var(--mocha);
+    padding: 0 16px;
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 500;
+    position: relative;
+    top: -10px;
+    width: auto;
+}
+
+/* ---- Google button ---- */
+.google {
+    width: 100%;
+    height: 56px;
+    margin: 0;
+    background-color: var(--cream);
+    color: var(--ink);
+    border: 1.5px solid var(--linen);
+    border-radius: var(--r-pill);
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all var(--t-fast) var(--ease);
+}
+
+.google::before {
+    content: '';
+    width: 18px;
+    height: 18px;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="%23FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C12.955 4 4 12.955 4 24s8.955 20 20 20s20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/><path fill="%23FF3D00" d="m6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C16.318 4 9.656 8.337 6.306 14.691z"/><path fill="%234CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/><path fill="%231976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002l6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/></svg>');
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.google:hover {
+    background-color: var(--cream-deep);
+    border-color: var(--rust);
+    cursor: pointer;
+}
+
+/* ---- Footer text ---- */
+.signtxt, form p {
+    margin: 12px 0 0 0 !important;
+    text-align: center !important;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    color: var(--mocha);
+}
+
+.signtxt a, form p a {
+    text-decoration: none;
+    color: var(--rust) !important;
+    font-weight: 600;
+}
+
+.signtxt a:hover, form p a:hover { text-decoration: underline; }
+
+/* ========================================================================
+   RESPONSIVE
+   ======================================================================== */
+
+@media (max-width: 900px) {
+    .layout { flex-direction: column; }
+    .left, .sleft { min-height: 200px; padding: 40px 6%; flex: 0 0 auto; }
+    .circle { max-width: 220px; padding: 26px; margin: 14px auto; }
+    .circle img { max-width: 70px; max-height: 70px; padding: 10px; }
+    .txt-info { font-size: 1.2rem; }
+    .subtxt { font-size: 0.7rem; letter-spacing: 0.18em; }
+    .right, .sright { padding: 40px 6% 60px; }
+}
+
+@media (max-width: 768px) {
+    .left, .sleft { display: flex; }
+
+    .right .headertxt { margin-top: 0; font-size: 2rem; }
+    .right .hdsub { margin-bottom: 24px; }
+    .sright .hdtxt { margin-top: 0; margin-left: 0; }
+    .sright .sbtxt { margin-right: 0; }
+    .sright .forgot { margin-left: 0; margin-top: 0; }
+
+    .form-group .lbl { margin: 0 0 8px 0; text-align: left; }
+
+    form { display: flex; flex-direction: column; gap: 16px; }
+
+    .form-row { display: flex; flex-direction: column; gap: 16px; }
+    .form-group { width: 100%; }
+    .form-group #fname, .form-group #lname { width: 100%; }
+
+    .inpt {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .inpt .btnbuyer, .inpt .btnsell {
+        margin: 0;
+        width: 100%;
+    }
+
+    .inp-field .lbl { margin-top: 0; margin-bottom: 8px; text-align: left; }
+    .inp-field #email, .inp-field #psw { margin-bottom: 0; width: 100%; margin-right: 0; }
+
+    .p-line { width: 100%; }
+    .p-txt { font-size: 0.72rem; }
+
+    form p { margin-left: 0 !important; text-align: center; }
+
+    .btncrt .crt, .btncrt .google, .btncrt .SignIn { width: 100%; height: 52px; margin: 0; }
+
+    .lbltxt { text-align: left; margin-top: 0; }
+
+    .signtxt { margin-top: 10px; text-align: center; font-size: 0.85rem; }
+
+    .hidelink {
+        display: block !important;
+        position: absolute;
+        top: 14px; left: 14px;
+        margin: 0;
+        padding: 8px 14px;
+        font-weight: 600;
+        background-color: var(--cream);
+        border: 1.5px solid var(--rust);
+        border-radius: var(--r-pill);
+        font-family: var(--font-display);
+        z-index: 10;
+    }
+
+    .hidelink .homelink {
+        font-size: 1.1rem;
+        color: var(--ink);
+    }
+
+    .homelink i {
+        color: var(--rust);
+        font-style: italic;
+    }
+}

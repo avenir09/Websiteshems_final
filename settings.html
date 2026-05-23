@@ -1,0 +1,282 @@
+<html>
+    <head>
+        <link rel = "stylesheet" href="style4.css">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>WovenWonders</title>
+        <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+
+    </head>
+    <body>
+        <div class="layout">
+            <div class="sidebar">
+                <a href="home.html"><p class="logo">Woven<i style="color: #B84A1E;">Wonders</i></p></a>
+                <p class="menu-title">MENU</p>
+                <div class="menu">
+                    <a href="dashboard.html">Dashboard</a>
+                    <a href="order.html">My Orders</a>
+                    <a href="commission.html">Commission a Piece</a>
+                    <a href="msg.html">Messages</a>
+                    <a class="active">Settings</a>
+                    <a href="market.html">Marketplace</a>
+                    <button class="logout-button" onclick="logoutUser()">Log Out</button>
+                </div>
+            </div>         
+            <main class="sublayout"> 
+                <header>
+                    <p style="font-size: 35px; margin-top: 10px;">Settings</p>
+                    <p>Manage your account and preferences</p>
+                </header>
+                <div class="prof-container">
+                    <p class="profhd">Profile Information</p>
+                    <div class="avatar-cont">
+                        <img class="profpic" id="profileAvatar" src="">
+                        <div class="prof-info">
+                            <p class="pfname" id="profileName"></p>
+                            <p class="etext" id="profileEmail"></p>
+                            <input type="file" class="acc-img" id="fileInput" accept="image/*">
+                            <label class="changepic" for="fileInput">Change Avatar</label>
+                        </div>
+                    </div>
+                    <form class="form1">
+                        <div>
+                            <label for="fname">FULL NAME</label>
+                            <input type="text" id="fname" name="fname">
+                        </div>
+                        <div>
+                            <label for="email">EMAIL</label>
+                        <input type="email" id="email" name="email">
+                        </div>
+                        <div>
+                            <label for="phone">PHONE NUMBER</label>
+                            <input type="tel" id="phone" name="phone">
+                        </div>
+                        <div>
+                            <button class="btn1save" type="button">SAVE CHANGES</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="chgpass-container">
+                    <p style="font-family:'Times New Roman', Times, serif; font-size: 21px;">Change Password</p>
+                    <form class="form2">
+                        <div>
+                            <label for="crtpass">CURRENT PASSWORD</label>
+                            <div class="toggle-password">
+                                <input type="password" name="crtpass" id="crtpass" readonly>
+                                <button type="button" class="toggle-btn" onclick="togglePassword('crtpass')">👁️‍🗨️</button>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="newpass">NEW PASSWORD</label>
+                            <div class="toggle-password">
+                                <input type="password" name="newpass" id="newpass">
+                                <button type="button" class="toggle-btn" onclick="togglePassword('newpass')">👁️‍🗨️</button>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="cnfpass">CONFIRM PASSWORD</label>
+                            <div class="toggle-password">
+                                <input type="password" name="cnfpass" id="cnfpass">
+                                <button type="button" class="toggle-btn" onclick="togglePassword('cnfpass')">👁️‍🗨️</button>
+                            </div>
+                        </div>
+                        <div>
+                            <button class="btn2save" type="button">SAVE CHANGES</button>
+                        </div>
+                    </form>
+                </div>
+            </main>
+            <main class="sublayout alter">
+                <div class="notifbar">
+                    <p class="notifhd">Notifications</p>
+                    <div class="notif1">
+                        <div>
+                            <label class="label" for="order-updates">Order Updates</label>
+                            <label class="toggle-switch" for="order-updates">
+                                <input type="checkbox" id="order-updates" name="order-updates">
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <p class="details">Get notified on order progress</p>
+                        </div>
+                        <div>
+                            <label class="label" for="newmsg">New Messages</label>
+                            <label class="toggle-switch" for="newmsg">
+                                <input type="checkbox" id="newmsg" name="newmsg">
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <p class="details">Get notified when artisan messages you</p>
+                        </div>
+                        <div>
+                            <label class="label" for="promos">Promotions</label>
+                            <label class="toggle-switch" for="promos">
+                                <input type="checkbox" id="promos" name="promos">
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <p class="details">Receive deals and announcements</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="pmethods">
+                    <p style="font-family:'Times New Roman', Times, serif; font-size: 21px;">Payment Methods</p>
+                    <input type="text" placeholder="Card Number" id="dCard" name="defaultCard">
+                    <button class="pbtn" type="button"> + Manage Payment Methods</button>
+                </div>
+                <div class="dangerzone">
+                    <p style="font-family:'Times New Roman', Times, serif; font-size: 21px; color: #B84A1E; margin-bottom: 10px;">Danger Zone</p>
+                    <p style="color: #8C6650; margin-bottom: 10px;">These actions are permanent and cannot be undone.</p>
+                    <button class="dbtn" type="button" id="deleteAccountBtn">Delete Account</button>
+                </div>
+            </main>
+        </div>
+        <script>
+            // Toggle password visibility
+            function togglePassword(inputId) {
+                const input = document.getElementById(inputId);
+                const type = input.type === 'password' ? 'text' : 'password';
+                input.type = type;
+            }
+
+            // Load user info from localStorage
+            const userInfo = JSON.parse(localStorage.getItem('userInfo')) || { email: 'user@example.com', name: 'User', avatar: '' };
+            
+            // Get the current user's password from users array
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const currentUser = users.find(u => u.email === userInfo.email);
+            const currentPassword = currentUser ? currentUser.password : '';
+            
+            // Display user info
+            document.getElementById('profileName').textContent = userInfo.name || 'User';
+            document.getElementById('profileEmail').textContent = userInfo.email || 'user@example.com';
+            
+            // Pre-fill current password in the password change form
+            document.getElementById('crtpass').value = currentPassword;
+            
+            if (userInfo.avatar) {
+                document.getElementById('profileAvatar').src = userInfo.avatar;
+            }
+            
+            // Pre-fill form fields
+            document.getElementById('fname').value = userInfo.name || '';
+            document.getElementById('email').value = userInfo.email || '';
+            
+            // Handle avatar change
+            const fileInput = document.querySelector('input[type="file"]');
+            const img = document.querySelector('.avatar-cont img');
+
+            fileInput.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        img.src = e.target.result;
+                        // Save avatar to localStorage
+                        userInfo.avatar = e.target.result;
+                        localStorage.setItem('userInfo', JSON.stringify(userInfo));
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            // Handle profile form save
+            document.querySelector('.form1').addEventListener('click', function(e) {
+                if (e.target.classList.contains('btn1save')) {
+                    e.preventDefault();
+                    userInfo.name = document.getElementById('fname').value;
+                    userInfo.email = document.getElementById('email').value;
+                    userInfo.phone = document.getElementById('phone').value;
+                    localStorage.setItem('userInfo', JSON.stringify(userInfo));
+                    document.getElementById('profileName').textContent = userInfo.name;
+                    document.getElementById('profileEmail').textContent = userInfo.email;
+                    alert('Profile updated successfully!');
+                }
+            });
+
+            // Handle password change form save
+            document.querySelector('.form2').addEventListener('click', function(e) {
+                if (e.target.classList.contains('btn2save')) {
+                    e.preventDefault();
+                    const crtpass = document.getElementById('crtpass').value;
+                    const newpass = document.getElementById('newpass').value;
+                    const cnfpass = document.getElementById('cnfpass').value;
+
+                    if (!newpass || !cnfpass) {
+                        alert('Please fill in both new password fields.');
+                        return;
+                    }
+
+                    if (newpass !== cnfpass) {
+                        alert('New passwords do not match. Please try again.');
+                        return;
+                    }
+
+                    // Update password in users array
+                    const userIndex = users.findIndex(u => u.email === userInfo.email);
+                    if (userIndex !== -1) {
+                        users[userIndex].password = newpass;
+                        localStorage.setItem('users', JSON.stringify(users));
+                        
+                        // Update current password display
+                        document.getElementById('crtpass').value = newpass;
+                        document.getElementById('newpass').value = '';
+                        document.getElementById('cnfpass').value = '';
+                        
+                        alert('Password changed successfully!');
+                    }
+                }
+            });
+            
+            // Notification preferences persistence
+            ['order-updates', 'newmsg', 'promos'].forEach(function(id) {
+                const checkbox = document.getElementById(id);
+                // Load saved state
+                const saved = localStorage.getItem('notif_' + id);
+                if (saved !== null) checkbox.checked = saved === 'true';
+                // Save on change
+                checkbox.addEventListener('change', function() {
+                    localStorage.setItem('notif_' + id, checkbox.checked);
+                });
+            });
+            // Select the delete button using its class
+            const deleteBtn = document.querySelector('.dbtn');
+
+            deleteBtn.addEventListener('click', () => {
+            // 1. Ask for confirmation to prevent accidents
+            const confirmed = confirm("Are you absolutely sure? This action cannot be undone.");
+
+             if (confirmed) {
+                // 2. Disable the button to prevent multiple clicks
+                deleteBtn.disabled = true;
+                deleteBtn.textContent = "Deleting...";
+
+                // 3. Logic to call your backend API
+                deleteAccount();
+            }
+        });
+
+        async function deleteAccount() {
+            try {
+                // Replace with your actual API endpoint
+                // const response = await fetch('/api/user/delete', { method: 'DELETE' });
+        
+                console.log("Account deletion request sent.");
+        
+                // Simulate a delay for the user experience
+                setTimeout(() => {
+                alert("Account successfully deleted.");
+                window.location.href = "del.html"; // Redirect the user
+                }, 2000);
+
+            } catch (error) {
+                console.error("Deletion failed:", error);
+                deleteBtn.disabled = false;
+                deleteBtn.textContent = "Delete Account";
+                }
+            }
+
+            function logoutUser() {
+                alert("Logging out... See you soon!");
+                window.location.href = "SignIn.html";
+            }
+        </script>
+    </body>
+</html>

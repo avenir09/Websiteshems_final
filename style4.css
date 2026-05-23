@@ -1,0 +1,819 @@
+/* ========================================================================
+   WovenWonders — order, msg, settings, checkout pages
+   ======================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..900,30..100;1,9..144,300..900,30..100&family=Manrope:wght@300..800&display=swap');
+
+:root {
+    --cream:        #FBF6F0;
+    --cream-deep:   #F5EBE0;
+    --linen:        #E8D5C4;
+    --linen-soft:   #F0DDCC;
+    --rust:         #B84A1E;
+    --rust-deep:    #8E3514;
+    --rust-soft:    #F0D5C8;
+    --clay:         #C97B3F;
+    --bark:         #3B1406;
+    --bark-soft:    #5C2410;
+    --mocha:        #8C6650;
+    --ink:          #2A1508;
+
+    --font-display: 'Fraunces', 'Times New Roman', serif;
+    --font-body:    'Manrope', system-ui, sans-serif;
+
+    --ease:         cubic-bezier(0.22, 1, 0.36, 1);
+    --t-fast:       180ms;
+    --t-base:       320ms;
+
+    --shadow-sm:    0 2px 8px rgba(59, 20, 6, 0.06);
+    --shadow-md:    0 12px 32px rgba(59, 20, 6, 0.08);
+    --shadow-lg:    0 24px 60px rgba(59, 20, 6, 0.12);
+
+    --r-sm:         8px;
+    --r-md:         14px;
+    --r-lg:         22px;
+    --r-pill:       999px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; padding: 0; }
+
+html { -webkit-font-smoothing: antialiased; }
+
+body {
+    font-family: var(--font-body);
+    color: var(--ink);
+    background-color: var(--cream);
+    font-size: 16px;
+    line-height: 1.55;
+}
+
+a { text-decoration: none; color: inherit; }
+button { font-family: inherit; cursor: pointer; }
+
+/* ---- Sidebar (shared with style2) ---- */
+.sidebar {
+    width: 240px;
+    min-height: 100vh;
+    height: auto;
+    background: var(--bark);
+    color: var(--cream);
+    padding: 28px 16px;
+    margin: 0;
+    position: sticky;
+    top: 0;
+    left: 0;
+    align-self: flex-start;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+}
+
+.logo {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--cream);
+    margin: 8px 0 36px 12px;
+    letter-spacing: -0.01em;
+}
+
+.logo i {
+    color: var(--rust-soft);
+    font-style: italic;
+    font-weight: 500;
+}
+
+.menu-title {
+    margin: 0 0 16px 12px;
+    color: var(--clay);
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.menu a {
+    display: block;
+    padding: 11px 14px;
+    color: rgba(251, 246, 240, 0.85);
+    text-decoration: none;
+    border-radius: var(--r-sm);
+    font-size: 0.92rem;
+    font-weight: 500;
+    transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+    margin-bottom: 0;
+    position: relative;
+}
+
+.menu a:hover,
+.menu .logout-button:hover {
+    background: var(--bark-soft);
+    color: var(--cream);
+    cursor: pointer;
+}
+
+.menu a.active {
+    background: var(--rust);
+    color: var(--cream);
+}
+
+.menu a.active::before {
+    content: '';
+    position: absolute;
+    left: -16px; top: 50%;
+    transform: translateY(-50%);
+    width: 4px; height: 24px;
+    background: var(--rust-soft);
+    border-radius: 0 var(--r-pill) var(--r-pill) 0;
+}
+
+.logout-button {
+    color: rgba(251, 246, 240, 0.7) !important;
+    appearance: none;
+    background: none !important;
+    border: none;
+    cursor: pointer;
+    padding: 11px 14px;
+    border-radius: var(--r-sm);
+    text-align: left;
+    font-size: 0.92rem;
+    font-weight: 500;
+    margin-top: 14px;
+    font-family: var(--font-body);
+    transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+}
+
+/* ---- Layout ---- */
+.layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sublayout, .sub-layout {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 36px 40px 60px;
+    min-width: 0;
+}
+
+/* ========================================================================
+   SETTINGS PAGE
+   ======================================================================== */
+
+header {
+    display: block;
+    margin: 0 0 28px 0;
+    width: 100%;
+}
+
+header p:first-of-type {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 3.2vw, 2.4rem) !important;
+    font-weight: 400 !important;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin: 0 0 6px 0 !important;
+    font-variation-settings: "SOFT" 80, "opsz" 144;
+}
+
+header p:nth-of-type(2) {
+    color: var(--mocha);
+    font-size: 1rem;
+    margin: 0;
+}
+
+.prof-container,
+.chgpass-container,
+.notifbar,
+.pmethods,
+.dangerzone {
+    display: block;
+    margin: 0 0 20px 0;
+    border: 1px solid var(--linen);
+    padding: 28px;
+    background: var(--cream);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+.profhd, .notifhd {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: var(--ink);
+    margin: 0 0 18px 0;
+    letter-spacing: -0.01em;
+}
+
+.pmethods > p:first-child,
+.dangerzone > p:first-child {
+    font-family: var(--font-display) !important;
+    font-size: 1.4rem !important;
+    font-weight: 500 !important;
+    color: var(--ink);
+    margin: 0 0 14px 0 !important;
+    letter-spacing: -0.01em;
+}
+
+.avatar-cont {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 22px;
+}
+
+.prof-info {
+    margin: 0;
+    color: var(--mocha);
+    font-family: var(--font-body);
+}
+
+.pfname {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 2px;
+}
+
+.etext {
+    color: var(--mocha);
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+}
+
+.profpic {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    margin: 0;
+    background: var(--linen);
+    object-fit: cover;
+    border: 2px solid var(--linen);
+    flex-shrink: 0;
+}
+
+.changepic {
+    display: inline-block;
+    color: var(--rust);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin: 0;
+    transition: color var(--t-fast) var(--ease);
+}
+
+.changepic:hover {
+    color: var(--rust-deep);
+    text-decoration: underline;
+}
+
+.form1 > div,
+.form2 > div {
+    display: block;
+    margin: 14px 0 0 0;
+}
+
+.form1 label,
+.form2 label {
+    display: block;
+    margin: 0 0 6px 0;
+    color: var(--bark);
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.form1 input,
+.form2 input {
+    width: 100%;
+    max-width: 360px;
+    height: 48px;
+    padding: 0 16px;
+    border: 1.5px solid var(--linen);
+    border-radius: var(--r-md);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    color: var(--ink);
+    background: var(--cream);
+    transition: border-color var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease);
+}
+
+.form1 input:focus,
+.form2 input:focus {
+    outline: none;
+    border-color: var(--rust);
+    box-shadow: 0 0 0 4px rgba(184, 74, 30, 0.10);
+}
+
+.btn1save {
+    display: inline-block;
+    margin-top: 18px;
+    width: auto;
+    min-width: 200px;
+    padding: 14px 26px;
+    background-color: var(--ink);
+    color: var(--cream);
+    border: none;
+    border-radius: var(--r-pill);
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.92rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    transition: background var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+}
+
+.btn1save:hover {
+    background-color: var(--rust);
+    transform: translateY(-2px);
+}
+
+.btn2save {
+    display: inline-block;
+    margin-top: 18px;
+    width: auto;
+    min-width: 240px;
+    padding: 14px 26px;
+    background-color: var(--rust);
+    color: var(--cream);
+    border: none;
+    border-radius: var(--r-pill);
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.92rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    transition: background var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+}
+
+.btn2save:hover {
+    background-color: var(--rust-deep);
+    transform: translateY(-2px);
+}
+
+/* ---- Notifications ---- */
+.notif1 > div {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--linen);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.notif1 > div:last-child { border-bottom: none; }
+
+.notif1 .label {
+    display: inline-block;
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 0.98rem;
+    font-weight: 500;
+    flex: 1 1 200px;
+    margin: 0;
+    letter-spacing: normal;
+    text-transform: none;
+}
+
+.notif1 .details {
+    display: block;
+    color: var(--mocha);
+    font-size: 0.85rem;
+    margin: 4px 0 0 0;
+    flex: 1 1 100%;
+    padding-bottom: 0;
+}
+
+/* ---- Payment methods ---- */
+#dCard {
+    width: 100%;
+    margin: 14px 0;
+    padding: 14px 16px;
+    background-color: var(--cream-deep);
+    border: 1.5px solid var(--linen);
+    border-radius: var(--r-md);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    color: var(--ink);
+}
+
+.pbtn, .dbtn {
+    width: 100%;
+    padding: 14px 20px;
+    background-color: var(--cream);
+    color: var(--bark);
+    border: 1.5px solid var(--linen);
+    border-radius: var(--r-md);
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.92rem;
+    transition: all var(--t-fast) var(--ease);
+}
+
+.pbtn:hover {
+    background-color: var(--cream-deep);
+    border-color: var(--rust);
+    color: var(--rust);
+}
+
+.dbtn:hover {
+    background-color: var(--rust);
+    color: var(--cream);
+    border-color: var(--rust);
+}
+
+.dangerzone > p:nth-child(2) {
+    color: var(--mocha);
+    font-size: 0.92rem;
+    margin: 0 0 14px 0 !important;
+}
+
+/* ========================================================================
+   MESSAGES PAGE
+   ======================================================================== */
+
+.msg-container {
+    display: block;
+    border: 1px solid var(--linen);
+    padding: 28px;
+    background: var(--cream);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+.msg-container header h1 {
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    font-weight: 500;
+    margin-bottom: 18px;
+    text-align: left;
+    letter-spacing: -0.01em;
+}
+
+#srch {
+    width: 100%;
+    padding: 12px 16px;
+    background-color: var(--cream-deep);
+    border: 1.5px solid var(--linen);
+    border-radius: var(--r-pill);
+    margin-bottom: 20px;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    color: var(--ink);
+}
+
+/* ========================================================================
+   ORDER PAGE — Available Orders + Active Commissions
+   ======================================================================== */
+
+.main {
+    flex: 1;
+    padding: 36px 40px 60px;
+    background-color: var(--cream);
+    min-width: 0;
+}
+
+.main > header h1 {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 3.2vw, 2.4rem);
+    font-weight: 400;
+    margin: 0 0 6px 0;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    color: var(--ink);
+    font-variation-settings: "SOFT" 80, "opsz" 144;
+}
+
+.main > header p {
+    color: var(--mocha);
+    font-size: 1rem;
+    margin: 0 0 26px 0;
+}
+
+.act-container {
+    margin-bottom: 32px;
+}
+
+.acttxt {
+    font-family: var(--font-display);
+    color: var(--ink);
+    font-size: 1.4rem;
+    font-weight: 500;
+    margin: 0 0 16px 0;
+    letter-spacing: -0.01em;
+}
+
+.comlist {
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    max-height: none;
+}
+
+.order-page {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+    margin-top: 12px;
+}
+
+.order-list {
+    background: var(--cream);
+    border: 1px solid var(--linen);
+    border-radius: var(--r-lg);
+    padding: 22px;
+    box-shadow: var(--shadow-sm);
+}
+
+.order-list h2 {
+    margin: 0 0 18px 0;
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+}
+
+.order-item {
+    display: block;
+    border: 1px solid var(--linen);
+    border-radius: var(--r-md);
+    padding: 18px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: border-color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+    background: var(--cream);
+}
+
+.order-item input { display: none; }
+
+.order-item-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.order-item strong {
+    display: block;
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.order-item small {
+    display: block;
+    color: var(--mocha);
+    font-size: 0.85rem;
+}
+
+.order-item:hover,
+.order-item:has(input:checked) {
+    border-color: var(--rust);
+    background: var(--cream-deep);
+}
+
+.order-badge {
+    padding: 6px 14px;
+    border-radius: var(--r-pill);
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--bark);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+}
+
+.order-badge.green   { background: #E6F6EE; color: #2C9670; }
+.order-badge.orange  { background: #FFE5C2; color: #8C5A0F; }
+
+.order-summary {
+    background: var(--cream);
+    border: 1px solid var(--linen);
+    border-radius: var(--r-lg);
+    padding: 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-height: 320px;
+    box-shadow: var(--shadow-sm);
+    position: sticky;
+    top: 20px;
+}
+
+.order-summary h2 {
+    margin: 0;
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+}
+
+.order-summary p {
+    margin: 0;
+    color: var(--mocha);
+    line-height: 1.6;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+    border-top: 1px solid var(--linen);
+    border-bottom: 1px solid var(--linen);
+    color: var(--ink);
+    font-weight: 700;
+    font-family: var(--font-display);
+}
+
+.summary-row strong {
+    color: var(--rust);
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.order-summary button {
+    width: 100%;
+    padding: 16px;
+    background: var(--rust);
+    border: none;
+    color: var(--cream);
+    border-radius: var(--r-pill);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: background var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+}
+
+.order-summary button:hover {
+    background: var(--rust-deep);
+    transform: translateY(-2px);
+}
+
+/* ========================================================================
+   CHECKOUT PAGE
+   ======================================================================== */
+
+.checkout-card {
+    max-width: 640px;
+    margin: 60px auto;
+    padding: 44px 36px;
+    background: var(--cream);
+    border: 1px solid var(--linen);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-md);
+}
+
+.checkout-card h1 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 2.4rem;
+    letter-spacing: -0.02em;
+    margin: 0 0 24px 0;
+    color: var(--ink);
+    font-variation-settings: "SOFT" 80, "opsz" 144;
+}
+
+.checkout-card h2 {
+    margin: 0 0 14px 0;
+}
+
+.checkout-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--linen);
+    color: var(--ink);
+    margin: 0;
+}
+
+.checkout-row:last-child {
+    border-bottom: none;
+    padding-top: 20px;
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    border-top: 2px solid var(--rust);
+    margin-top: 8px;
+}
+
+.checkout-row span {
+    color: var(--mocha);
+    font-size: 0.9rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.checkout-row strong {
+    color: var(--ink);
+    font-weight: 600;
+    text-align: right;
+}
+
+.checkout-button {
+    width: 100%;
+    padding: 16px;
+    background: var(--rust);
+    border: none;
+    border-radius: var(--r-pill);
+    color: var(--cream);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 24px;
+    transition: background var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+}
+
+.checkout-button:hover {
+    background: var(--rust-deep);
+    transform: translateY(-2px);
+}
+
+/* ========================================================================
+   RESPONSIVE
+   ======================================================================== */
+
+@media (max-width: 900px) {
+    .order-page { grid-template-columns: 1fr; }
+    .order-summary { position: static; min-height: 0; }
+}
+
+@media (max-width: 768px) {
+    .layout {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        min-height: auto;
+        height: auto;
+        padding: 16px 20px;
+        position: fixed;
+        bottom: 0;
+        top: auto;
+        left: 0; right: 0;
+        z-index: 1000;
+        flex-direction: row;
+        align-items: center;
+        border-top: 1px solid var(--bark-soft);
+    }
+
+    .sidebar .logo,
+    .menu-title { display: none; }
+
+    .menu {
+        display: flex;
+        flex-direction: row;
+        gap: 4px;
+        overflow-x: auto;
+        scrollbar-width: none;
+        width: 100%;
+    }
+
+    .menu::-webkit-scrollbar { display: none; }
+
+    .menu a, .menu .logout-button {
+        display: inline-block;
+        font-size: 0.75rem;
+        padding: 8px 12px;
+        white-space: nowrap;
+        margin-top: 0;
+    }
+
+    .menu a.active::before { display: none; }
+
+    .main, .sublayout, .sub-layout {
+        padding: 24px 20px 100px;
+    }
+
+    .form1 input, .form2 input { max-width: 100%; }
+
+    .btn1save, .btn2save { width: 100%; }
+
+    .checkout-card { margin: 24px 16px; padding: 28px 22px; }
+    .checkout-card h1 { font-size: 1.8rem; }
+}

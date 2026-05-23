@@ -1,0 +1,121 @@
+<html>
+    <head>
+      <link rel = "stylesheet" href="restyle.css">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>WovenWonders</title>
+        <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+
+    </head>
+    <body>
+        <div class="layout">
+            <div class="sleft">
+                <a href="home.html"><p class="ww"><b>Woven</b></p><p style="font-size: 5vh; float: left; color: #B84A1E; margin-top: 20px;"><i><b>Wonders</b></i></p></a>
+                <div class="circle">
+                    <img src="images/yarn.png" alt="">
+                    <p class="txt-info">Join our community<br>of <i style="color: #B84A1E;">artisans</i> & buyers.</p>
+                    <p class="subtxt">Handcrafted - Custom - Yours</p>
+                </div>
+            </div>
+            <div class="sright">
+                <div class="hidelink">
+                    <a class="homelink" href="home.html">W<i>W</i></a>
+                </div>
+                <p class="hdtxt">Welcome back</p>
+                <p class="sbtxt">Sign in to your account</p>
+                <form>
+                    <div class="inp-field">
+                        <label class="lbl" for="email">Email address</label>
+                        <input required type="email" name="email" id="email">
+                        <label class="lbl" for="psw">Password</label>
+                        <div class="toggle-password">
+                            <input required type="password" name="psw" id="psw">
+                            <button type="button" class="toggle-btn" onclick="togglePassword('psw')">👁️‍🗨️</button>
+                        </div>
+                    </div>
+                    <a class="forgot" href="forgotpass.html">Forgot password?</a>
+                    <div class="btncrt">
+                        <button class="SignIn" type="submit">Sign In</button>
+                    </div>
+                    <div class="p-line">
+                        <span class="p-txt">or continue with</span>
+                    </div>
+                    <br>
+                    <div class="btncrt">
+                        <button class="google" type="button">Continue with Google</button>
+                    </div>
+                    <p style="margin-left: 200px; font-family: Arial; font-size: 15px;">Don't have an account?<a href="SignUp.html" style="text-decoration: none; color: #ff5e00;"> Sign up</a></p>
+                </form>
+            </div>
+        </div>
+        <script type="module">
+            import { signIn } from './database.js';
+
+            function togglePassword(inputId) {
+                const input = document.getElementById(inputId);
+                input.type = input.type === 'password' ? 'text' : 'password';
+            }
+            window.togglePassword = togglePassword;
+
+            const signInForm = document.querySelector('form');
+            const googleButton = document.querySelector('.google');
+
+            signInForm.addEventListener('submit', async function(event) {
+                event.preventDefault();
+
+                const email    = document.getElementById('email').value.trim();
+                const password = document.getElementById('psw').value;
+
+                if (!email || !password) {
+                    alert('Pakienter ang iyong email at password.');
+                    return;
+                }
+
+                const submitBtn = signInForm.querySelector('.SignIn');
+                submitBtn.textContent = 'Nagsa-sign in...';
+                submitBtn.disabled = true;
+
+                try {
+                    const user = await signIn({ email, password });
+                    alert('Signed in successfully as ' + email);
+                    if (user.role === 'Seller/Artisan') {
+                        window.location.href = 'seller.html';
+                    } else {
+                        window.location.href = 'dashboard.html';
+                    }
+                } catch (err) {
+                    console.error(err);
+                    if (err.message.includes('Invalid login')) {
+                        alert('Mali ang email o password. Subukan ulit.');
+                    } else {
+                        alert('May error: ' + err.message);
+                    }
+                    submitBtn.textContent = 'Sign In';
+                    submitBtn.disabled = false;
+                }
+            });
+
+            googleButton.addEventListener('click', function() {
+                window.open('https://accounts.google.com/signin/v2/identifier', '_blank');
+            });
+
+            document.addEventListener('DOMContentLoaded', () => {
+                const forgotLink = document.querySelector('.forgot');
+                if (forgotLink) {
+                    forgotLink.addEventListener('click', async (event) => {
+                        event.preventDefault();
+                        const email = prompt('Ilagay ang iyong email para mag-reset ng password:');
+                        if (!email) return;
+                        if (email.includes('@') && email.includes('.')) {
+                            alert('A password reset link has been sent to: ' + email + '
+Please check your inbox.');
+                            window.location.href = 'SignUp.html';
+                        } else {
+                            alert('Pakienter ang valid na email address.');
+                        }
+                    });
+                }
+            });
+        </script>
+    </body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - WovenWonders</title>
+    <link rel="stylesheet" href="style4.css">
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <div class="checkout-card">
+        <h1>Checkout</h1>
+        <div id="checkoutContent">
+            <p>Loading selected order...</p>
+        </div>
+        <button id="confirmButton" class="checkout-button">Confirm Payment</button>
+        <button onclick="window.location.href='order.html'" class="checkout-button" style="margin-top: 12px; background: #FDF3EF; color: #3B1406;">Back to Orders</button>
+    </div>
+    <script>
+        const checkoutContent = document.getElementById('checkoutContent');
+        const confirmButton = document.getElementById('confirmButton');
+        const rawOrder = localStorage.getItem('checkoutOrder');
+
+        if (!rawOrder) {
+            checkoutContent.innerHTML = '<p>No checkout order found. Please return to the orders page and select an item.</p>';
+            confirmButton.disabled = true;
+        } else {
+            const order = JSON.parse(decodeURIComponent(rawOrder));
+            checkoutContent.innerHTML = `
+                <div class="checkout-row">
+                    <span>Order</span>
+                    <strong>${order.title}</strong>
+                </div>
+                <div class="checkout-row">
+                    <span>Customer</span>
+                    <strong>${order.customer}</strong>
+                </div>
+                <div class="checkout-row">
+                    <span>Delivery</span>
+                    <strong>${order.delivery}</strong>
+                </div>
+                <div class="checkout-row">
+                    <span>Status</span>
+                    <strong>${order.status}</strong>
+                </div>
+                <div class="checkout-row">
+                    <span>Quantity</span>
+                    <strong>${order.quantity}</strong>
+                </div>
+                <div class="checkout-row">
+                    <span>Total</span>
+                    <strong>$${order.price.toFixed(2)}</strong>
+                </div>
+            `;
+        }
+
+        confirmButton.addEventListener('click', () => {
+            if (!rawOrder) return;
+            alert('Checkout complete. Thank you!');
+            localStorage.removeItem('checkoutOrder');
+            window.location.href = 'dashboard.html';
+        });
+    </script>
+</body>
+</html>

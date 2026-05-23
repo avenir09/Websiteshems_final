@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Dashboard - WovenWonders</title>
+    <link rel="stylesheet" href="style2.css">
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+    <script src="database.js" type="module"></script>
+
+</head>
+<body>
+    <div class="layout">
+        <div class="sidebar">
+            <a href="home.html"><p class="logo">Woven<i>Wonders</i></p><br></a>
+            <p class="menu-title">MENU</p>
+            <div class="menu">
+                <a class="active">Dashboard</a>
+                <a href="order.html">My Commissions</a>
+                <a href="commission.html">Create Listing</a>
+                <a href="msg.html">Messages</a>
+                <a href="settings.html">Settings</a>
+                <a href="market.html">Marketplace</a>
+                <button type="button" class="logout-button" onclick="logoutUser()">Log Out</button>
+            </div>
+        </div>
+        <main class="main">
+            <header>
+                <div>
+                    <br>
+                    <h1>Welcome back, <span id="profileName">Seller</span>!</h1>
+                    <p>Manage your commissions and connect with buyers.</p>
+                </div>
+                <div class="avatar" id="avatarLetter">S</div>
+            </header>
+            <section class="stats">
+                <div class="card">
+                    <p>ACTIVE COMMISSIONS</p>
+                    <h2 id="activeCount">2</h2>
+                </div>
+                <div class="card">
+                    <p>COMPLETED</p>
+                    <h2 id="completedCount">8</h2>
+                </div>
+                <div class="card">
+                    <p>MESSAGES</p>
+                    <h2 id="messageCount">5</h2>
+                </div>
+            </section>
+            <section class="orders">
+                <p class="activetxt">ACTIVE COMMISSIONS</p>
+                <div class="act-ordlist" id="activeCommissionsContainer"></div>
+            </section>
+            <button class="cbtn" id="newBtn" onclick="window.location.href='msg.html'">Check Messages</button>
+        </main>
+    </div>
+    <script>
+        function logoutUser() {
+            alert("Logging out... See you soon!");
+            window.location.href = "SignIn.html";
+        }
+
+        function getStatusClass(status) {
+            if (status === 'In Progress') return 'green';
+            if (status === 'Just Started' || status === 'Pending') return 'orange';
+            return 'gray';
+        }
+
+        function getProgressWidth(status) {
+            if (status === 'In Progress') return 80;
+            if (status === 'Just Started') return 35;
+            if (status === 'Pending') return 15;
+            return 50;
+        }
+
+        function loadUserProfile() {
+            const userInfo = JSON.parse(localStorage.getItem('userInfo')) || { name: 'Seller' };
+            const profileName = document.getElementById('profileName');
+            const avatarLetter = document.getElementById('avatarLetter');
+
+            profileName.textContent = userInfo.name || 'Seller';
+            if (avatarLetter) {
+                avatarLetter.textContent = (userInfo.name || 'Seller')[0].toUpperCase();
+            }
+        }
+
+        function renderActiveCommissions() {
+            const activeOrders = JSON.parse(localStorage.getItem('activeOrders') || '[]');
+            const container = document.getElementById('activeCommissionsContainer');
+            const activeCount = document.getElementById('activeCount');
+
+            activeCount.textContent = activeOrders.length;
+
+            if (!activeOrders.length) {
+                container.innerHTML = '<div class="order"><div class="info"><strong>No active commissions yet</strong><small> Buyers will commission your work here.</small></div></div>';
+                return;
+            }
+
+            container.innerHTML = activeOrders.map(order => `
+                <div class="order">
+                    <div class="info">
+                        <strong>${order.title}</strong>
+                        <small>By ${order.customer} · Est. delivery: ${order.delivery}</small>
+                        <span class="status ${getStatusClass(order.status)}">${order.status}</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: ${getProgressWidth(order.status)}%;"></div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        loadUserProfile();
+        renderActiveCommissions();
+    </script>
+</body>
+</html>

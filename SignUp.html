@@ -1,0 +1,143 @@
+<html>
+    <head>
+      <link rel = "stylesheet" href="restyle.css">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>WovenWonders</title>
+        <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+
+    </head>
+    <body>
+        <div class="layout">
+            <div class="left">
+                <a href="home.html"><p class="ww"><b>Woven</b><span><i><b>Wonders</b></i></span></p></a>
+                <div class="circle">
+                    <img src="images/yarn.png" alt="">
+                    <p class="txt-info">Join our community<br>of <i>artisans</i> & buyers.</p>
+                    <p class="subtxt">Handcrafted - Custom - Yours</p>
+                </div>
+            </div>
+            <div class="right">
+                <div class="hidelink">
+                    <a class="homelink" href="home.html">W<i>W</i></a>
+                </div>
+                <p class="headertxt">Create an account</p>
+                <p class="hdsub">Start commissioning your first piece today</p>
+                <form>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="lbl" for="fname">FIRST NAME</label> 
+                            <input type="text" name="fname" id="fname">
+                        </div>
+                        <div class="form-group">
+                            <label class="lbl" for="lname">LAST NAME</label>
+                            <input type="text" name="lname" id="lname">
+                        </div>
+                    </div>
+                    <div class="inp-field">
+                        <label class="lbl" for="email">EMAIL ADDRESS</label>
+                        <input required type="email" name="email" id="email">
+                        <label class="lbl" for="psw">PASSWORD</label>
+                        <div class="toggle-password">
+                            <input required type="password" name="psw" id="psw">
+                            <button type="button" class="toggle-btn" onclick="togglePassword('psw')">👁️‍🗨️</button>
+                        </div>
+                    </div>
+                    <label class="lbl lbltxt">SIGNING UP AS A</label>
+                    <div class="inpt">
+                        <input type="hidden" id="role" name="role" value="">
+                        <button class="btnbuyer" type="button">Buyer</button>
+                        <button class="btnsell" type="button">Seller/Artisan</button>
+                    </div>
+                    <div class="btncrt">
+                        <button class="crt" type="submit" value="submit">CREATE ACCOUNT</button>
+                    </div>
+                    <div class="p-line">
+                        <span class="p-txt">or continue with</span>
+                    </div>
+                    <div class="btncrt">
+                        <button class="google" type="button">Continue with Google</button>
+                    </div>
+                    <p class="signtxt">Already have an account <a href="SignIn.html"><b>Sign In</b></a></p>
+                </form>
+            </div>
+        </div>
+        <script type="module">
+            import { signUp } from './database.js';
+
+            function togglePassword(inputId) {
+                const input = document.getElementById(inputId);
+                input.type = input.type === 'password' ? 'text' : 'password';
+            }
+            window.togglePassword = togglePassword;
+
+            const roleInput = document.getElementById('role');
+            const buyerButton = document.querySelector('.btnbuyer');
+            const sellerButton = document.querySelector('.btnsell');
+            const googleButton = document.querySelector('.google');
+            const signUpForm = document.querySelector('form');
+
+            function selectRole(role) {
+                roleInput.value = role;
+                buyerButton.classList.toggle('selected', role === 'Buyer');
+                sellerButton.classList.toggle('selected', role === 'Seller/Artisan');
+            }
+
+            buyerButton.addEventListener('click', () => selectRole('Buyer'));
+            sellerButton.addEventListener('click', () => selectRole('Seller/Artisan'));
+
+            signUpForm.addEventListener('submit', async function(event) {
+                event.preventDefault();
+
+                const firstName = document.getElementById('fname').value.trim();
+                const lastName  = document.getElementById('lname').value.trim();
+                const email     = document.getElementById('email').value.trim();
+                const password  = document.getElementById('psw').value;
+                const role      = roleInput.value;
+
+                if (!firstName || !lastName || !email || !password) {
+                    alert('Pakipunan ang lahat ng fields bago mag-create ng account.');
+                    return;
+                }
+                if (!role) {
+                    alert('Pumili ng Buyer o Seller/Artisan bago mag-create ng account.');
+                    return;
+                }
+                if (password.length < 6) {
+                    alert('Ang password ay dapat hindi bababa sa 6 na karakter.');
+                    return;
+                }
+
+                const submitBtn = signUpForm.querySelector('.crt');
+                submitBtn.textContent = 'Gumagawa ng account...';
+                submitBtn.disabled = true;
+
+                try {
+                    await signUp({ email, password, firstName, lastName, role });
+                    alert(`Account created successfully!
+Name: ${firstName} ${lastName}
+Role: ${role}
+Email: ${email}`);
+                    if (role === 'Seller/Artisan') {
+                        window.location.href = 'seller.html';
+                    } else {
+                        window.location.href = 'dashboard.html';
+                    }
+                } catch (err) {
+                    console.error(err);
+                    if (err.message.includes('already registered')) {
+                        alert('May account na ang email na ito. Mag-Sign In na lang.');
+                    } else {
+                        alert('May error: ' + err.message);
+                    }
+                    submitBtn.textContent = 'CREATE ACCOUNT';
+                    submitBtn.disabled = false;
+                }
+            });
+
+            googleButton.addEventListener('click', function() {
+                window.open('https://accounts.google.com/signin/v2/identifier', '_blank');
+            });
+        </script>
+    </body>
+</html>

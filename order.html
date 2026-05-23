@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders - WovenWonders</title>
+    <link rel="stylesheet" href="style4.css">
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+
+</head>
+<body>
+    <div class="layout">
+        <div class="sidebar">
+        <a href="home.html"><p class="logo">Woven<i style="color: #B84A1E;">Wonders</i></p><br></a>
+        <p class="menu-title">MENU</p>
+        <div class="menu">
+            <a href="dashboard.html">Dashboard</a>
+            <a class="active">My Orders</a>
+            <a href="commission.html">Commission a Piece</a>
+            <a href="msg.html">Messages</a>
+            <a href="settings.html">Settings</a>
+            <a href="market.html">Marketplace</a>
+            <button class="logout-button" onclick="logoutUser()">Log Out</button>
+        </div>
+    </div>
+    <main class="main">
+        <header>
+            <div>
+                <h1>My Orders</h1>
+                <p>Track your commissions and completed orders.</p>
+            </div>
+        </header>
+        <section class="act-container">
+            <h2 class="acttxt">Active Commissions</h2>
+            <div class="comlist" id="commissioning-list"></div>
+        </section>
+        <section class="order-page">
+            <div class="order-list">
+                <h2>Available Orders</h2>
+                <form id="orderForm"></form>
+            </div>
+            <aside class="order-summary">
+                <h2>Order Summary</h2>
+                <p id="summaryName">Select an order to enable checkout</p>
+                <p id="summaryDetails"></p>
+                <div class="summary-row">
+                    <span>Total</span>
+                    <strong id="summaryPrice">$0.00</strong>
+                </div>
+                <button id="checkoutButton" type="button" value="">Proceed to checkout</button>
+            </aside>
+        </section>
+    </main>
+    </div>
+    <script>
+        function logoutUser() {
+            alert("Logging out... See you soon!");
+            window.location.href = "SignIn.html";
+        }
+
+        let orders = JSON.parse(localStorage.getItem('availableOrders') || '[]');
+
+        const orderForm = document.getElementById('orderForm');
+        const summaryName = document.getElementById('summaryName');
+        const summaryDetails = document.getElementById('summaryDetails');
+        const summaryPrice = document.getElementById('summaryPrice');
+        const checkoutButton = document.getElementById('checkoutButton');
+
+        function renderOrderOptions() {
+            orderForm.innerHTML = orders.map((order, index) => {
+                const orderData = encodeURIComponent(JSON.stringify(order));
+                return `
+                    <label class="order-item">
+                        <input type="radio" name="selectedOrder" value="${orderData}" ${index === 0 ? 'checked' : ''}>
+                        <div class="order-item-content">
+                            <div>
+                                <strong>${order.title}</strong>
+                                <small>By ${order.customer} · Est. delivery: ${order.delivery}</small>
+                            </div>
+                            <div class="order-badge ${order.status === 'In Progress' ? 'green' : 'orange'}">${order.status}</div>
+                        </div>
+                    </label>
+                `;
+            }).join('');
+            attachOrderListeners();
+            updateSummary();
+        }
+
+        function attachOrderListeners() {
+            document.querySelectorAll('input[name="selectedOrder"]').forEach(input => {
+                input.addEventListener('change', updateSummary);
+            });
+        }
+
+        function updateSummary() {
+            const selected = document.querySelector('input[name="selectedOrder"]:checked');
+            if (!selected) {
+                summaryName.textContent = 'Select an order to enable checkout';
+                summaryDetails.textContent = '';
+                summaryPrice.textContent = '$0.00';
+                checkoutButton.value = '';
+                return;
+            }
+
+            const order = JSON.parse(decodeURIComponent(selected.value));
+            summaryName.textContent = order.title;
+            summaryDetails.textContent = `${order.quantity} item · Delivery ${order.delivery}`;
+            summaryPrice.textContent = `₱${order.price.toFixed(2)}`;
+            checkoutButton.value = selected.value;
+        }
+
+        checkoutButton.addEventListener('click', () => {
+            if (!checkoutButton.value) {
+                alert('Please select an order before proceeding to checkout.');
+                return;
+            }
+
+            const selectedOrder = JSON.parse(decodeURIComponent(checkoutButton.value));
+            orders = orders.filter(order => order.id !== selectedOrder.id);
+            localStorage.setItem('availableOrders', JSON.stringify(orders));
+
+            const activeOrders = JSON.parse(localStorage.getItem('activeOrders') || '[]');
+            activeOrders.push(selectedOrder);
+            localStorage.setItem('activeOrders', JSON.stringify(activeOrders));
+
+            localStorage.setItem('checkoutOrder', JSON.stringify(selectedOrder));
+            window.location.href = 'checkout.html';
+        });
+
+        renderOrderOptions();
+        
+        // Load and display commissioning orders
+        
+        function loadCommissioningOrders() {
+            const commissioningList = document.getElementById('commissioning-list');
+            const orders = JSON.parse(localStorage.getItem('commissioningOrders') || '[]');
+            
+            if (orders.length === 0) {
+                commissioningList.innerHTML = '<p style="color: #8C6650;">No active commissions yet.</p>';
+                return;
+            }
+            
+            commissioningList.innerHTML = orders.map((order, idx) => {
+                const statusColor = order.status === 'In Progress' ? 'green' : (order.status === 'Pending' ? 'orange' : 'green');
+                const progressWidth = order.progress || 0;
+                
+                return `
+                    <div style="background: white; border: 1px solid #E8D5C4; border-radius: 12px; padding: 16px;">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+                            <div>
+                                <strong style="color: #3B1406;">${order.name}</strong>
+                                <small style="display: block; color: #8C6650; margin-top: 4px;">Budget: ₱${order.price.toLocaleString()}</small>
+                            </div>
+                            <span style="background: ${statusColor === 'green' ? '#d4f5e0' : '#ffe5c2'}; color: #3B1406; padding: 6px 12px; border-radius: 12px; font-size: 12px;">${order.status}</span>
+                        </div>
+                        <div style="background: #f0f0f0; height: 6px; border-radius: 4px; overflow: hidden; margin-bottom: 8px;">
+                            <div style="background: #B84A1E; height: 100%; width: ${progressWidth}%; transition: width 0.3s;"></div>
+                        </div>
+                        <small style="color: #8C6650;">Size: ${order.size} | Deadline: ${order.deadline} | ${progressWidth}% complete</small>
+                        <div style="display: flex; gap: 8px; margin-top: 12px;">
+                            <button style="background: #B84A1E; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer;" onclick="viewCommissionDetails(${idx})">View Details</button>
+                            <button style="background: #f1f1f1; color: #3B1406; border: 1px solid #d3c4b0; padding: 8px 16px; border-radius: 8px; cursor: pointer;" onclick="deleteCommissionOrder(${idx})">Delete</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function viewCommissionDetails(idx) {
+            const orders = JSON.parse(localStorage.getItem('commissioningOrders') || '[]');
+            const order = orders[idx];
+            if (!order) return;
+            alert(`Commission details:\n\nName: ${order.name}\nBudget: ₱${order.price.toLocaleString()}\nSize: ${order.size}\nDeadline: ${order.deadline}\nStatus: ${order.status}\nProgress: ${order.progress || 0}%`);
+        }
+
+        function deleteCommissionOrder(idx) {
+            const orders = JSON.parse(localStorage.getItem('commissioningOrders') || '[]');
+            const order = orders[idx];
+            if (!order) return;
+            const confirmed = confirm(`Delete commission for ${order.name}? This cannot be undone.`);
+            if (!confirmed) return;
+            orders.splice(idx, 1);
+            localStorage.setItem('commissioningOrders', JSON.stringify(orders));
+            loadCommissioningOrders();
+        }
+        
+        loadCommissioningOrders();
+    </script>
+</body>
+</html>
